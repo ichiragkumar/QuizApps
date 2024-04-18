@@ -1,14 +1,21 @@
 const express = require("express")
-const router = express.Router()
 
+const router = express.Router()
+router.use(express.json())
+
+const User = require("../models/userdb")
 
 
 // create user account 
-router.post("/createUser", (req, res)=>{
+router.post("/createUser", async (req, res)=>{
         // get user details
         // validate user details: ZOD
-    
+        const userDetails = req.body
+        console.log(userDetails);
 
+        const user = await User.create(userDetails)
+        console.log(user);        
+        
 
         // try to save in database
         // before saving password: dcrypt the password
@@ -22,14 +29,22 @@ router.post("/createUser", (req, res)=>{
 
 
 
-router.post("/loginUser", (req, res)=>{
+router.post("/loginUser", async (req, res)=>{
     // get the details
     // validate the inputs using ZOD
 
     // try to find the user
+    const userDetails = req.body
+    const user = await User.findOne({
+        username:req.body.username,
+    })
+    console.log(user);
+
     // then compare the dcrypt the password
 
     // if YES: then SUCCESS
+
+
     res.status(201).json({
         msg:"user login succesfully"
     })
@@ -38,9 +53,15 @@ router.post("/loginUser", (req, res)=>{
 
 
 
-router.delete("/delteAccount",(req, res)=>{
+router.delete("/delteAccount",async (req, res)=>{
     // get the user id
     // and delete his account
+
+    const userDetails = req.body
+    const user = await User.deleteOne({
+        username:req.body.username
+    })
+    console.log(user);
 
     res.status(201).json({
         msg:"Acccount deleted succesfully"

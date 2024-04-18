@@ -1,6 +1,7 @@
 const mongoConnect = require("../db/connectdb")
+const mongoose = require("mongoose")
 
-const quizsSchema = new mongoConnect.Schema({
+const quizsSchema = new mongoose.Schema({
     
         question:{
             type: String,
@@ -37,5 +38,5 @@ const quizsSchema = new mongoConnect.Schema({
 
 })
 
-const Quizes = mongoConnect.model("Quiz", quizsSchema)
+const Quizes = mongoose.model("Quiz", quizsSchema)
 module.exports = Quizes
