@@ -1,6 +1,6 @@
 const mongoConnect = require("../db/connectdb")
 
-const UserSchem = new mongoConnect.Schema({
+const UserSchema = new mongoConnect.Schema({
     username:{
         type: String,
         required: true,
@@ -17,4 +17,6 @@ const UserSchem = new mongoConnect.Schema({
 
 })
 
-module.exports = UserSchem
+
+const User = mongoConnect.model("User", UserSchema)
+module.exports = User
