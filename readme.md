@@ -2,7 +2,9 @@
 
 
 ## Functionalities:
-Create a Quiz:
+
+
+### Create a Quiz:
      Users can create quizzes by sending a POST request to /quizzes 
     endpoint.
      Required fields in the request body: 
