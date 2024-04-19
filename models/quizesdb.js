@@ -13,6 +13,8 @@ const quizsSchema = new mongoose.Schema({
         options:{
             type: [String],
             required: true,
+            
+
         },
 
         rightAnswer:{
@@ -21,13 +23,10 @@ const quizsSchema = new mongoose.Schema({
             required:true,
         },
 
-
-        
         startDate:{
             type: Date,
             default:Date.now()
         },
-
 
         endDate:{
             type: Date,
