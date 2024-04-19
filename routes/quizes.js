@@ -76,20 +76,45 @@ router.get("/active", async (req, res)=>{
 
 
 
-// Get wuiz result
-router.get("/:id/result", (req, res)=>{
+// Get result
+router.get("/:id/result",async (req, res)=>{
+    const getQuizId = req.params.id    
+    try {
+        const quizResult = await Quiz.find({
+            _id:getQuizId
+        })
 
-    res.status(201).json({
-        msg:"got the result"
-    })
+
+        const describeResult = quizResult.map(quiz=>{
+            return {
+                rightAnswer: quiz.rightAnswer,
+                _id: quiz._id
+            };
+        })
+
+
+        res.status(200).json({ 
+            describeResult,
+            msg:"Quiz Result"
+         });
+    } catch (error) {
+        console.log(error);
+        res.status(411).json({ 
+            msg:"Server Error"
+         });
+        
+    }
+    
+   
 
 })
 
 
 // get all the quizes [Active or Inactive]
-router.get("/all", (req, res)=>{
-
+router.get("/all", async (req, res)=>{
+    const allQuiz = await Quiz.find({})
     res.status(201).json({
+        allQuiz,
         msg:"got the all quiz"
     })
 })
