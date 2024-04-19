@@ -55,26 +55,25 @@ router.post("/create", async (req, res)=>{
     }
 
    
-       
-       
-
-   
-
-
-    
-
-
 })
 
 
-// get all the active quizes
-router.get("/active", (req, res)=>{
-    res.status(201).json({
-        msg:"got active quiz"
+// working on get active quiz
+router.get("/active", async (req, res)=>{
+    const currentDate = new Date()
+    const activeQuiz = await Quiz.find({
+        startDate: { $lte: currentDate },
+        endDate: { $gte: currentDate } 
     })
-
-
+    if(!activeQuiz){
+        res.status(403).json({
+            msg:"No Quiz Found"
+        })
+    }
+    res.status(200).json({ quiz: activeQuiz });
 })
+
+
 
 
 // Get wuiz result
