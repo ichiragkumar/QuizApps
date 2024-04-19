@@ -1,6 +1,19 @@
 const express = require("express")
 require("dotenv").config()
 const db = require("./db/connectdb")
+var cron = require('node-cron');
+const Quiz = require("./models/quizesdb")
+
+
+cron.schedule('* * * * * *', async () => {
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 5); 
+    currentDate.setMinutes(currentDate.getMinutes() + 30);
+
+    const updateStatus = await Quiz.updateMany({endDate: { $lte: currentDate },}, {$set: { isActive: false },})
+  });
+
+
 const app = express()
 
 

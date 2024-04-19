@@ -3,6 +3,7 @@ const router = express.Router()
 router.use(express.json())
 const Quiz = require("../models/quizesdb")
 const createQuizSchema = require("../controller/quizinputvalidators")
+const { default: errorMap } = require("zod/locales/en.js")
 
 
 // create quiz
@@ -58,33 +59,39 @@ router.post("/create", async (req, res)=>{
 })
 
 
-// working on get active quiz
+
 // Please note that IST is 5 hours and 30 minutes ahead of UTC
 router.get("/active", async (req, res)=>{
     const currentDate = new Date();
     currentDate.setHours(currentDate.getHours() + 5); // Subtract 5 hours
     currentDate.setMinutes(currentDate.getMinutes() + 30);
 
-    const activeQuiz = await Quiz.find({ endDate: { $gt: currentDate } });
-    if (activeQuiz.length === 0) {
-        res.status(200).json({
-            activeQuiz,
-            msg:"No Active Quiz"
+    try {
+        const activeQuiz = await Quiz.find({ endDate: { $gt: currentDate } });
+        if (activeQuiz.length === 0) {
+            res.status(200).json({
+                activeQuiz,
+                msg:"No Active Quiz"
+            })
+        } else {
+            res.status(200).json({
+                activeQuiz,
+                msg:"Active Quizes"
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(411).json({
+            msg:"Server Error"
         })
-    } else {
-        res.status(200).json({
-            activeQuiz,
-            msg:"Active Quizes"
-        })
+        
     }
+    
 }
 
 )
 
  
-
-
-
 
 
 
