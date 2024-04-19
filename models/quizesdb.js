@@ -31,6 +31,11 @@ const quizsSchema = new mongoose.Schema({
         endDate:{
             type: Date,
             default:Date.now()
+        },
+        isActive:{
+            type: Boolean,
+            default: true,
+            
         }
 
 

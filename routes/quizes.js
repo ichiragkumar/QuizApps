@@ -59,19 +59,32 @@ router.post("/create", async (req, res)=>{
 
 
 // working on get active quiz
+// Please note that IST is 5 hours and 30 minutes ahead of UTC
 router.get("/active", async (req, res)=>{
-    const currentDate = new Date()
-    const activeQuiz = await Quiz.find({
-        startDate: { $lte: currentDate },
-        endDate: { $gte: currentDate } 
-    })
-    if(!activeQuiz){
-        res.status(403).json({
-            msg:"No Quiz Found"
+    const currentDate = new Date();
+    currentDate.setHours(currentDate.getHours() + 5); // Subtract 5 hours
+    currentDate.setMinutes(currentDate.getMinutes() + 30);
+
+    const activeQuiz = await Quiz.find({ endDate: { $gt: currentDate } });
+    if (activeQuiz.length === 0) {
+        res.status(200).json({
+            activeQuiz,
+            msg:"No Active Quiz"
+        })
+    } else {
+        res.status(200).json({
+            activeQuiz,
+            msg:"Active Quizes"
         })
     }
-    res.status(200).json({ quiz: activeQuiz });
-})
+}
+
+)
+
+ 
+
+
+
 
 
 
@@ -81,16 +94,26 @@ router.get("/:id/result",async (req, res)=>{
     const getQuizId = req.params.id    
     try {
         const quizResult = await Quiz.find({
-            _id:getQuizId
-        })
+            _id:getQuizId,
+            endDate: { $gte: afterFiveminutes }
 
+        })
 
         const describeResult = quizResult.map(quiz=>{
-            return {
-                rightAnswer: quiz.rightAnswer,
-                _id: quiz._id
-            };
+            const endTime = quiz.endDate
+            const afterFiveminutes = new Date(endTime.getTime() + (5 * 60000));
+            if(afterFiveminutes>endTime){
+                return {
+                    rightAnswer: quiz.rightAnswer,
+                    _id: quiz._id,
+                    endTime:endTime.toString(),
+                    afterFiveminutes:afterFiveminutes.toString()
+                };
+            } 
         })
+
+       
+
 
 
         res.status(200).json({ 
