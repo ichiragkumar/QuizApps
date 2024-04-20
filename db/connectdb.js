@@ -1,3 +1,7 @@
 const mongoose = require("mongoose")
-mongoose.connect("mongodb+srv://testme:testme@atlascluster.2bagtvb.mongodb.net/QuizApp")
+require("dotenv").config()
+
+
+const DATABASE_URL = process.env.DB_URL
+mongoose.connect(DATABASE_URL)
 
