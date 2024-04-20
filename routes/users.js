@@ -2,6 +2,8 @@ const express = require("express")
 const bcrypt = require('bcrypt');
 const router = express.Router()
 router.use(express.json())
+const jwt = require("jsonwebtoken")
+const JWT_SECRET = require("../config")
 
 const User = require("../models/userdb")
 const createAccountSchema = require("../controller/accountValidator")
@@ -12,6 +14,7 @@ router.post("/createUser", async (req, res)=>{
         const parsedResult = createAccountSchema.safeParse(userDetails)
         if (parsedResult.success) {
                 const user = await User.findOne({username:userDetails.username})
+               
                 if(!user){
                     try{
                         const saltRounds = 10
@@ -20,7 +23,11 @@ router.post("/createUser", async (req, res)=>{
                             username:userDetails.username,
                             password:hash,
                         })
-                        res.status(201).json({dbUser,msg:"created succesfully"})
+                        const userId = dbUser._id
+                        const token = jwt.sign({
+                            userId
+                        }, JWT_SECRET);
+                        res.status(201).json({token,msg:"created succesfully"})
                     })
                     }catch (error){
                         console.log(error)
@@ -46,18 +53,17 @@ router.post("/loginUser", async (req, res)=>{
 
     if (parsedResult.success) {
         const user = await User.findOne({username:userDetails.username})
-        console.log(user);
-        if(user){
-            
+        if(user){   
             try{
-                console.log("start comparing  ")
                 bcrypt.compare(userDetails.password, user.password,async (err, result) => {
                    if(result){
-                        res.status(200).json({msg:"Login Succesfully"})
+                        const token = jwt.sign({
+                            userId: user._id
+                        },JWT_SECRET)
+                        res.status(200).json({token,msg:"Login Succesfully"})
                    }else{
                         res.status(200).json({msg:"Invalid Password"})
                    }
-
 
                 })
                
@@ -67,9 +73,8 @@ router.post("/loginUser", async (req, res)=>{
 
             }
         }else{
-            res.status(200).json({msg:"User Does  not Exist"})
+            res.status(403).json({msg:"User Does  not Exist"})
         }
-
         }else{
             const error = parsedResult.error;
             console.log(error);

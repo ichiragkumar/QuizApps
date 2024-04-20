@@ -3,11 +3,10 @@ const router = express.Router()
 router.use(express.json())
 const Quiz = require("../models/quizesdb")
 const createQuizSchema = require("../controller/quizinputvalidators")
-const { default: errorMap } = require("zod/locales/en.js")
-
+const authMiddleware = require("../auth/middleware")
 
 // create quiz
-router.post("/create", async (req, res)=>{
+router.post("/create",authMiddleware, async (req, res)=>{
     const requestBody= req.body;
     requestBody.startDate = new Date(requestBody.startDate);
     requestBody.endDate = new Date(requestBody.endDate);
