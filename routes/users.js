@@ -102,8 +102,10 @@ router.delete("/delteAccount",async (req, res)=>{
 
 
 
-router.get("/", (req, res)=>{
+router.get("/", async (req, res)=>{
+    const dbUsers = await User.find({})
     res.status(201).json({
+        dbUsers,
         msg:"All users"
     })
 })

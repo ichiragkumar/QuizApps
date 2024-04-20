@@ -27,12 +27,8 @@ app.use("/api/v1/quizzes",quizesRoutes)
 
 
 app.get("/", (req, res)=>{
-    res.send("<center><h1>Welcom To Quiz App</h1></center>");
+    res.send(` <center><h1>Welcom To Quiz App</h1></center>`);
 })
-
-
-
-
 
 app.listen(PORT, ()=>{
     console.log(`server is running at  http://localhost:${PORT}/`);
