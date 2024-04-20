@@ -119,10 +119,6 @@ router.get("/:id/result",async (req, res)=>{
             } 
         })
 
-       
-
-
-
         res.status(200).json({ 
             describeResult,
             msg:"Quiz Result"
@@ -135,8 +131,6 @@ router.get("/:id/result",async (req, res)=>{
         
     }
     
-   
-
 })
 
 

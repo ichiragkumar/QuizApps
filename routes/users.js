@@ -4,59 +4,56 @@ const router = express.Router()
 router.use(express.json())
 
 const User = require("../models/userdb")
+const createAccountSchema = require("../controller/accountValidator")
 
 
 // create user account 
 router.post("/createUser", async (req, res)=>{
-        // get user details
-        // validate user details: ZOD
         const userDetails = req.body
-        console.log(userDetails);
-
-        const user = await User.create(userDetails)
-        console.log(user);        
-        
-
-        // try to save in database
-        // before saving password: dcrypt the password
-
-        // and then give response: success
-
-        res.status(201).json({
-            msg:"user is created"
-        })
+        const parsedResult = createAccountSchema.safeParse(userDetails)
+        if (parsedResult.success) {
+            try {
+                const user = await User.create(userDetails)
+                res.status(201).json({user,msg:"created succesfully"})
+            } catch (error) {
+                console.log(`Database Error ${error}`)
+                res.status(411).json({msg:"Database Error"})
+            }
+        }else {
+        const error = parsedResult.error;
+        console.log(error);
+        res.status(201).json({msg:"Invalid Input"})
+    }
 })
 
 
 
 router.post("/loginUser", async (req, res)=>{
-    // get the details
-    // validate the inputs using ZOD
-
-    // try to find the user
     const userDetails = req.body
-    const user = await User.findOne({
-        username:req.body.username,
-    })
-    console.log(user);
-
-    // then compare the dcrypt the password
-
-    // if YES: then SUCCESS
-
-
-    res.status(201).json({
-        msg:"user login succesfully"
-    })
+    const parsedResult = createAccountSchema.safeParse(userDetails)
+    if (parsedResult.success) {
+        try {
+            const user = await User.findOne({
+                username:req.body.username,
+                password:req.body.password
+            })
+            res.status(201).json({user,msg:"User Found"})
+        } catch (error) {
+            console.log(`Database Error ${error}`)
+            res.status(411).json({msg:"Database Error"})
+        }
+    }else {
+        const error = parsedResult.error;
+        console.log(error);
+        res.status(201).json({msg:"Invalid Input"})
+    }
+    
 })
 
 
 
 
 router.delete("/delteAccount",async (req, res)=>{
-    // get the user id
-    // and delete his account
-
     const userDetails = req.body
     const user = await User.deleteOne({
         username:req.body.username
